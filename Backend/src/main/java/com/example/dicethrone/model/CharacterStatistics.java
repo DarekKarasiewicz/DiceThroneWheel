@@ -28,17 +28,17 @@ public class CharacterStatistics {
 
     private LocalDateTime lastDrawn;
 
-    private Integer totalWins = 0;
+//    private Integer totalWins = 0;
+//
+//    private Integer totalLosses = 0;
 
-    private Integer totalLosses = 0;
+//    private Double winRate = 0.0;
 
-    private Double winRate = 0.0;
-
-    private Double averageGameDuration;
-
-    private Long mostFrequentOpponentId;
-
-    private Integer currentStreak = 0;
-
-    private Integer longestStreak = 0;
+//    private Double averageGameDuration;
+//
+//    private Long mostFrequentOpponentId;
+//
+//    private Integer currentStreak = 0;
+//
+//    private Integer longestStreak = 0;
 }

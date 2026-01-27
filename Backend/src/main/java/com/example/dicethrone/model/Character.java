@@ -35,8 +35,11 @@ public class Character {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "hero_image_url")
+    private String heroImageUrl;
+
+    @Column(name = "bg_image_url")
+    private String BackGroundImageUrl;
 
     @Column(length = 1000)
     private String description;

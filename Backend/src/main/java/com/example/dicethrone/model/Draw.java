@@ -38,6 +38,10 @@ public class Draw {
 
     private String sessionId;
 
+    @ManyToOne
+    @JoinColumn(name = "player_id")
+    private Player player;
+
     @PrePersist
     public void prePersist() {
         this.timestamp = LocalDateTime.now();
