@@ -36,7 +36,9 @@ public class Draw {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    private String sessionId;
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
 
     @ManyToOne
     @JoinColumn(name = "player_id")

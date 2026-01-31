@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,17 +16,22 @@ import com.example.dicethrone.model.Player;
 
 import java.util.List;
 
-//@Entity
-//@Table(name = "game")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+@Entity
+@Table(name = "game")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Game {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private int id;
-//
-//    private List<Player> players;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    private String status;
+
+    private String winner_id;
+
+    @OneToMany(mappedBy = "game")
+    private List<Draw> draws;
 }
 
