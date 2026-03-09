@@ -2,7 +2,7 @@ import { useState } from 'react';
 import api from '../services/api';
 import CharacterCard from './CharacterCard';
 
-export default function RollingMachine({ characters, players }) {
+export default function RollingMachine({ characters, players, gameId }) {
     const [selectedPlayerId, setSelectedPlayerId] = useState("");
     const [isRolling, setIsRolling] = useState(false);
     const [sliderList, setSliderList] = useState([]);
@@ -57,7 +57,8 @@ export default function RollingMachine({ characters, players }) {
             await api.post('/draw/save', null, {
                 params: {
                     characterId: drawnCharacter.id,
-                    playerId: selectedPlayerId
+                    playerId: selectedPlayerId,
+                    gameId: gameId
                 }
             });
             alert(`Success! Character saved for player.`);

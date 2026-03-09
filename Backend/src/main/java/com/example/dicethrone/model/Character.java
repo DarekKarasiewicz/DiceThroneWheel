@@ -44,10 +44,4 @@ public class Character {
     @Column(length = 1000)
     private String description;
 
-    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Draw> draws = new ArrayList<>();
-
-    @OneToOne(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
-    private CharacterStatistics statistics;
-
 }

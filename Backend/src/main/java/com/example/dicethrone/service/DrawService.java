@@ -5,9 +5,11 @@ import com.example.dicethrone.mapper.CharacterMapper;
 import com.example.dicethrone.mapper.DrawMapper;
 import com.example.dicethrone.model.Draw;
 import com.example.dicethrone.model.Character;
+import com.example.dicethrone.model.Game;
 import com.example.dicethrone.model.Player;
 import com.example.dicethrone.repository.CharacterRepository;
 import com.example.dicethrone.repository.DrawRepository;
+import com.example.dicethrone.repository.GameRepository;
 import com.example.dicethrone.repository.PlayerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class DrawService {
     private final CharacterRepository characterRepository;
     private final DrawRepository drawRepository;
     private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
     private final DrawMapper drawMapper;
     private final Random random = new Random();
 
@@ -46,15 +49,17 @@ public class DrawService {
 //        Draw savedDraw = drawRepository.save(draw);
         return drawMapper.toDTO(draw);
     }
-    public DrawResponseDTO saveDraw (@RequestParam int playerId, int characterId) {
+    public DrawResponseDTO saveDraw (@RequestParam int playerId, int characterId, int gameId) {
 
         Character character = characterRepository.findById(characterId).orElseThrow();
         Player player = playerRepository.findById(playerId).orElseThrow();
+        Game game = gameRepository.findById(gameId).orElseThrow();
 
 
         Draw draw = new Draw();
         draw.setCharacter(character);
         draw.setPlayer(player);
+        draw.setGame(game);
 
         Draw savedDraw = drawRepository.save(draw);
         return drawMapper.toDTO(savedDraw);

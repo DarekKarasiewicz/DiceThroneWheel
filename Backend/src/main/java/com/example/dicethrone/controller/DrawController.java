@@ -20,8 +20,8 @@ public class DrawController {
     }
 
     @PostMapping("/save")
-    public DrawResponseDTO saveCharacter(@RequestParam int playerId, @RequestParam int characterId) {
-        return drawService.saveDraw(playerId, characterId);
+    public DrawResponseDTO saveCharacter(@RequestParam int playerId, @RequestParam int characterId, @RequestParam int gameId) {
+        return drawService.saveDraw(playerId, characterId, gameId);
     }
 
     @GetMapping("/history")

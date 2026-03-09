@@ -30,10 +30,4 @@ public class Player {
     @Column(nullable = false, unique = true)
     private String name;
 
-//    @OneToOne(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private CharacterStatistics statistics;
-
-    @OneToMany(mappedBy = "player")
-    private List<Draw> draws;
-
 }

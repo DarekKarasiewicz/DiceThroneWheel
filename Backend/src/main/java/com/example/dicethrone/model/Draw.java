@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -15,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 
+import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,16 +35,16 @@ public class Draw {
     @JoinColumn(name="character_id",nullable = false)
     private Character character;
 
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
-
-    @ManyToOne
-    @JoinColumn(name = "game_id")
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name = "game_id",nullable = false)
     private Game game;
 
     @ManyToOne
-    @JoinColumn(name = "player_id")
+    @JoinColumn(name = "player_id",nullable = false)
     private Player player;
+
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 
     @PrePersist
     public void prePersist() {
