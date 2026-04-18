@@ -1,4 +1,4 @@
-export default function TopBar() {
+export default function TopBar({ onStats }) {
     return (
         <div style={{
             height: '6vh',
@@ -45,16 +45,16 @@ export default function TopBar() {
                 </button>
 
                 <button
-                    disabled
+                    onClick={onStats}
                     style={{
                         padding: '8px 20px',
-                        backgroundColor: '#374151',
-                        color: '#9ca3af',
+                        backgroundColor: '#ca8a04',
+                        color: '#111827',
                         border: 'none',
                         borderRadius: '6px',
                         fontSize: '0.9rem',
-                        fontWeight: '600',
-                        cursor: 'not-allowed',
+                        fontWeight: '700',
+                        cursor: 'pointer',
                         textTransform: 'uppercase',
                         letterSpacing: '1px'
                     }}

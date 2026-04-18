@@ -1,4 +1,4 @@
-export default function StartScreen({ onNewGame, loading }) {
+export default function StartScreen({ onNewGame, loading, onStats }) {
     return (
         <div style={{
             height: '100vh',
@@ -66,6 +66,34 @@ export default function StartScreen({ onNewGame, loading }) {
                 }}
             >
                 {loading ? 'Creating game...' : '⚔ New Game'}
+            </button>
+
+            {/* Statistics Button */}
+            <button
+                onClick={onStats}
+                style={{
+                    padding: '12px 36px',
+                    backgroundColor: 'transparent',
+                    color: '#ca8a04',
+                    border: '2px solid #ca8a04',
+                    borderRadius: '6px',
+                    fontSize: '0.95rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '3px',
+                    transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={e => {
+                    e.target.style.backgroundColor = '#ca8a04';
+                    e.target.style.color = '#111827';
+                }}
+                onMouseLeave={e => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#ca8a04';
+                }}
+            >
+                📊 Statistics
             </button>
         </div>
     );

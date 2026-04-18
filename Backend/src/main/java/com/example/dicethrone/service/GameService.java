@@ -41,6 +41,7 @@ public class GameService {
             game.get().setStatus(GameStatus.valueOf(gameStatus));
         }
 
+        repository.save(game.get());
         return gameMapper.convertToDTO(game.get());
     }
 

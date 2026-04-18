@@ -19,9 +19,9 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         // Sprawdź czy już są postacie (żeby nie dodawać przy każdym starcie)
-        if (characterRepository.count() > 0) {
-            return;
-        }
+//        if (characterRepository.count() > 0) {
+//            return;
+//        }
 
         // Dodaj postacie
         Character pyromancer = new Character();
@@ -84,17 +84,17 @@ public class DataSeeder implements CommandLineRunner {
         vampire.setHeroImageUrl("/images/HeroImage/%s.png".formatted(vampire.getName()));
         vampire.setDescription("The Vampire Lord's power paralyzes even the bravest fighters. No combatant is more vicious. Her rending claws will leave her foes bloody and hemorrhaging. Attempting to resist her mesmerizing gaze or overcome her powerful blood magic will prove deadly for any foolish enough to oppose her!");
 
-//        Character barbarian  = new Character();
-//        barbarian.setName("Barbarian");
-//        barbarian.setBackGroundImageUrl("/images/HeroBackGround/%s.jpg".formatted(barbarian.getName()));
-//        barbarian.setHeroImageUrl("/images/HeroImage/%s.png".formatted(barbarian.getName()));
-//        barbarian.setDescription("The Barbarian isn’t the most elegant hero around. He loves to smash things. He is known for hitting his opponents so hard, they are left stunned and concussed. His endless barrage of heavy-hitting attacks shows that even the most simple fighting style can be deadly.");
-//
-//        Character moonElf  = new Character();
-//        moonElf.setName("Moon Elf");
-//        moonElf.setBackGroundImageUrl("/images/HeroBackGround/%s.jpg".formatted(moonElf.getName().replace(" ", "")));
-//        moonElf.setHeroImageUrl("/images/HeroImage/%s.png".formatted(moonElf.getName().replace(" ", "")));
-//        moonElf.setDescription("The Moon Elf’s damage may not match hit for hit with her opponents. However, her ability to repeatedly dodge attacks while simultaneously using the power of the moon to blind and entangle her foes, makes her a frustratingly dangerous opponent to face.");
+        Character barbarian  = new Character();
+        barbarian.setName("Barbarian");
+        barbarian.setBackGroundImageUrl("/images/HeroBackGround/%s.jpg".formatted(barbarian.getName()));
+        barbarian.setHeroImageUrl("/images/HeroImage/%s.png".formatted(barbarian.getName()));
+        barbarian.setDescription("The Barbarian isn’t the most elegant hero around. He loves to smash things. He is known for hitting his opponents so hard, they are left stunned and concussed. His endless barrage of heavy-hitting attacks shows that even the most simple fighting style can be deadly.");
+
+        Character moonElf  = new Character();
+        moonElf.setName("Moon Elf");
+        moonElf.setBackGroundImageUrl("/images/HeroBackGround/%s.jpg".formatted(moonElf.getName().replace(" ", "")));
+        moonElf.setHeroImageUrl("/images/HeroImage/%s.png".formatted(moonElf.getName().replace(" ", "")));
+        moonElf.setDescription("The Moon Elf’s damage may not match hit for hit with her opponents. However, her ability to repeatedly dodge attacks while simultaneously using the power of the moon to blind and entangle her foes, makes her a frustratingly dangerous opponent to face.");
 
         Character pirate = new Character();
         pirate.setName("Cursed Pirate");
@@ -108,20 +108,20 @@ public class DataSeeder implements CommandLineRunner {
         artificer.setHeroImageUrl("/images/HeroImage/%s.png".formatted(artificer.getName()));
         artificer.setDescription("To underestimate the Artificer is to invite destruction by a cold & calculated robotic assault. His deranged love for metallic tools-of-destruction is second only to his desire to see all combatants reduced to nothing.");
 
-        characterRepository.save(monk);
-        characterRepository.save(ninja);
-        characterRepository.save(palladyn);
-        characterRepository.save(pyromancer);
-        characterRepository.save(shadowThief);
-        characterRepository.save(vampire);
-        characterRepository.save(seraph);
-        characterRepository.save(huntress);
-        characterRepository.save(tactician);
-        characterRepository.save(treant);
-        characterRepository.save(pirate);
-        characterRepository.save(artificer);
-//        characterRepository.save(moonElf);
-//        characterRepository.save(barbarian);
+        saveIfNotExistsHero(monk);
+        saveIfNotExistsHero(ninja);
+        saveIfNotExistsHero(palladyn);
+        saveIfNotExistsHero(pyromancer);
+        saveIfNotExistsHero(shadowThief);
+        saveIfNotExistsHero(vampire);
+        saveIfNotExistsHero(seraph);
+        saveIfNotExistsHero(huntress);
+        saveIfNotExistsHero(tactician);
+        saveIfNotExistsHero(treant);
+        saveIfNotExistsHero(pirate);
+        saveIfNotExistsHero(artificer);
+        saveIfNotExistsHero(moonElf);
+        saveIfNotExistsHero(barbarian);
 
         Player player1 = new Player();
         player1.setName("Darek");
@@ -132,11 +132,29 @@ public class DataSeeder implements CommandLineRunner {
         Player player3 = new Player();
         player3.setName("Seba");
 
-        playerRepository.save(player1);
-        playerRepository.save(player2);
-        playerRepository.save(player3);
+        saveIfNotExistsPlayer(player1);
+        saveIfNotExistsPlayer(player2);
+        saveIfNotExistsPlayer(player3);
 
         System.out.println("✅ Dodano 10 postacie do bazy!");
         System.out.println("✅ Dodano 2 graczy do bazy!");
+    }
+
+    private void saveIfNotExistsHero(Character character) {
+        if (!characterRepository.existsByName(character.getName())) {
+            characterRepository.save(character);
+            System.out.println("Dodano: " + character.getName());
+        } else {
+            System.out.println("Już istnieje: " + character.getName());
+        }
+    }
+
+    private void saveIfNotExistsPlayer(Player player) {
+        if (!playerRepository.existsByName(player.getName())) {
+            playerRepository.save(player);
+            System.out.println("Dodano: " + player.getName());
+        } else {
+            System.out.println("Już istnieje: " + player.getName());
+        }
     }
 }

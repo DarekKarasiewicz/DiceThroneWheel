@@ -7,11 +7,10 @@ import com.example.dicethrone.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.PutExchange;
-
 import java.util.List;
 
 @RestController
@@ -31,7 +30,7 @@ public class GameController {
         return gameService.createNewGame();
     }
 
-    @PutExchange("/create")
+    @PutMapping("/save")
     public GameDTO saveGame(@RequestParam int gameId, @RequestParam int winnerId, @RequestParam String gameStatus){
         return gameService.saveGame(gameId, winnerId, gameStatus);
     }

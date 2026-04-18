@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface CharacterRepository extends JpaRepository<Character, Integer> {
 
     Optional<Character> findByName(String name);
+
+    boolean existsByName(String name);
 }
