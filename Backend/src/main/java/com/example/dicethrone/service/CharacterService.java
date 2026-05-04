@@ -27,10 +27,8 @@ public class CharacterService {
 
 
     public CharacterDTO getCharacterById(int id){
-        Character character = characterRepository.findById(id).orElse(null);
-        if (character == null){
-            return null;
-        }
+        Character character = characterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Character not found: " + id));
         return characterMapper.toDTO(character);
     }
 

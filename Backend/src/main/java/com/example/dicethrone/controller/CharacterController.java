@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class CharacterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CharacterDTO> getCharacterById(@RequestParam("id") Integer id) {
+    public ResponseEntity<CharacterDTO> getCharacterById(@PathVariable("id") Integer id) {
         CharacterDTO character = characterService.getCharacterById(id);
         return ResponseEntity.ok(character);
     }
