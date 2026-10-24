@@ -1,12 +1,16 @@
 import React from 'react';
 
 
-export default function CharacterCard({ character }) {
+// width: szerokość karty w px (wysokość w proporcjach 290 x 380)
+export default function CharacterCard({ character, width = 290 }) {
+  const height = Math.round(width * 380 / 290);
+  const small = width < 200;
+
   if (!character) {
     return (
       <div style={{ 
-        width: '290px', 
-        height: '380px', 
+        width: `${width}px`, 
+        height: `${height}px`, 
         backgroundColor: '#1f2937', 
         borderRadius: '12px'
       }} />
@@ -17,8 +21,8 @@ export default function CharacterCard({ character }) {
     <div 
       style={{
         display: 'inline-block',
-        width: '290px',      
-        height: '380px',     
+        width: `${width}px`,      
+        height: `${height}px`,     
         position: 'relative',
         borderRadius: '12px',
         border: '3px solid #374151',
@@ -59,11 +63,11 @@ export default function CharacterCard({ character }) {
         left: 0, 
         right: 0, 
         backgroundColor: 'rgba(0,0,0,0.85)', 
-        padding: '10px',
+        padding: small ? '6px' : '10px',
         borderTop: '2px solid #374151'
       }}>
         <p style={{ 
-          fontSize: '14px', 
+          fontSize: small ? '11px' : '14px', 
           fontWeight: '900', 
           color: '#facc15', 
           margin: 0, 

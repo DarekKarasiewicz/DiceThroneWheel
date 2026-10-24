@@ -2,22 +2,27 @@ import DataBackup from './DataBackup';
 
 export default function StartScreen({ onNewGame, loading, onStats }) {
     return (
-        <div style={{
-            height: '100vh',
+        <div className="scroll-y" style={{
+            height: '100%',
             backgroundColor: '#111827',
+            display: 'flex'
+        }}>
+        {/* margin: auto centruje treść, a gdy się nie mieści (telefon w poziomie) - można przewinąć */}
+        <div style={{
+            margin: 'auto',
+            padding: '24px 16px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '40px'
+            gap: 'clamp(20px, 5vh, 40px)'
         }}>
             {/* Logo */}
             <div style={{ textAlign: 'center' }}>
                 <h1 style={{
                     color: '#facc15',
-                    fontSize: '4rem',
+                    fontSize: 'clamp(2.2rem, 10vw, 4rem)',
                     fontWeight: '900',
-                    letterSpacing: '6px',
+                    letterSpacing: 'clamp(2px, 1vw, 6px)',
                     textTransform: 'uppercase',
                     margin: 0,
                     textShadow: '0 0 30px rgba(202, 138, 4, 0.5)'
@@ -99,6 +104,7 @@ export default function StartScreen({ onNewGame, loading, onStats }) {
             </button>
 
             <DataBackup />
+        </div>
         </div>
     );
 }

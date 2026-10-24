@@ -116,7 +116,8 @@ function GameBox({ gameId, draws, onSelectWinner, winnerId }) {
     );
 }
 
-export default function RightPanel() {
+// stacked: wąski ekran - panel pod maszyną na całą szerokość, gry w siatce
+export default function RightPanel({ stacked = false }) {
     const [groupedGames, setGroupedGames] = useState([]);
     const [winners, setWinners] = useState({});
     const [loading, setLoading] = useState(true);
@@ -171,13 +172,19 @@ export default function RightPanel() {
     };
 
     return (
-        <div style={{
+        <div className={stacked ? undefined : 'scroll-y'} style={stacked ? {
+            width: '100%',
+            flex: 'none',
+            backgroundColor: '#1f2937',
+            borderTop: '2px solid #ca8a04',
+            padding: '20px 12px'
+        } : {
             width: '15%',
             minWidth: '200px',
+            flex: 'none',
             backgroundColor: '#1f2937',
             borderLeft: '2px solid #ca8a04',
-            height: '94vh',
-            overflowY: 'auto',
+            height: '100%',
             padding: '20px'
         }}>
             <h3 style={{
@@ -199,7 +206,9 @@ export default function RightPanel() {
                     No games yet
                 </p>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={stacked
+                    ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: '12px' }
+                    : { display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {groupedGames.map(([gameId, draws]) => (
                         <GameBox
                             key={gameId}

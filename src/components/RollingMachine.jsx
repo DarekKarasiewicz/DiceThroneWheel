@@ -2,23 +2,28 @@ import { useState } from 'react';
 import api from '../services/api';
 import CharacterCard from './CharacterCard';
 
-export default function RollingMachine({ characters, players, gameId }) {
+export default function RollingMachine({ characters, players, gameId, screen }) {
     const [selectedPlayerId, setSelectedPlayerId] = useState("");
     const [isRolling, setIsRolling] = useState(false);
     const [sliderList, setSliderList] = useState([]);
     const [headerName, setHeaderName] = useState("Roll your hero");
-    const [translateX, setTranslateX] = useState(0);
     const [drawnCharacter, setDrawnCharacter] = useState(null);
+    const [innerOffset, setInnerOffset] = useState(0);
 
-    const CARD_WIDTH = 300;
+    const CARD_WIDTH = screen.cardWidth;
+    const CARD_HEIGHT = Math.round((CARD_WIDTH - 10) * 380 / 290);
     const WINNER_INDEX = 40;
+    const { isPhone } = screen;
+
+    // Pozycja taśmy liczona z aktualnej szerokości karty, więc obrót ekranu jej nie psuje.
+    // innerOffset to ułamek karty (0..1), w którym zatrzymał się celownik.
+    const stripOffset = isRolling || drawnCharacter ? (WINNER_INDEX + innerOffset) * CARD_WIDTH : 0;
 
     const startDraw = async () => {
         if (isRolling || characters.length === 0 || !selectedPlayerId) return;
 
         try {
             setIsRolling(false);
-            setTranslateX(0);
             setHeaderName("Rolling...");
             setDrawnCharacter(null);
 
@@ -32,11 +37,9 @@ export default function RollingMachine({ characters, players, gameId }) {
             setSliderList(generatedList);
 
             setTimeout(() => {
+                // Celownik zatrzymuje się w środkowej części zwycięskiej karty (jak wcześniej 50-250 px z 300)
+                setInnerOffset((Math.floor(Math.random() * 200) + 50) / 300);
                 setIsRolling(true);
-                const distanceToWinnerStart = WINNER_INDEX * CARD_WIDTH;
-                const randomInnerOffset = Math.floor(Math.random() * 200) + 50;
-                const totalMove = distanceToWinnerStart + randomInnerOffset;
-                setTranslateX(totalMove);
             }, 50);
 
             setTimeout(() => {
@@ -69,31 +72,37 @@ export default function RollingMachine({ characters, players, gameId }) {
     };
 
     return (
-        <div style={{
+        <div className={screen.isStacked ? undefined : 'scroll-y'} style={{
             backgroundColor: '#0b0e14',
-            minHeight: '94vh',
+            flex: screen.isStacked ? 'none' : 1,
+            minWidth: 0,
             width: '100%',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            padding: isPhone ? '16px 0 24px' : '24px 0 32px',
             fontFamily: 'sans-serif'
         }}>
 
+            {/* marginTop/marginBottom: auto na pierwszym i ostatnim elemencie centrują treść w pionie
+                bez ucinania jej, gdy ekran jest niski */}
             <h1 style={{
-                fontSize: '3.5rem',
+                fontSize: 'clamp(1.6rem, min(6vw, 9vh), 3.5rem)',
                 fontWeight: '900',
-                marginBottom: '20px',
+                marginTop: 'auto',
+                marginBottom: isPhone ? '12px' : '20px',
+                padding: '0 12px',
+                textAlign: 'center',
                 color: '#facc15',
                 textTransform: 'uppercase',
-                letterSpacing: '4px'
+                letterSpacing: 'clamp(1px, 0.6vw, 4px)'
             }}>
                 {headerName}
             </h1>
 
             {/* WYBÓR GRACZA */}
-            <div style={{ marginBottom: '30px' }}>
+            <div style={{ marginBottom: isPhone ? '16px' : '30px', maxWidth: '92vw' }}>
                 <p style={{ color: '#9ca3af', textAlign: 'center', fontSize: '0.8rem', letterSpacing: '2px' }}>
                     SELECT PLAYER
                 </p>
@@ -105,9 +114,10 @@ export default function RollingMachine({ characters, players, gameId }) {
                         backgroundColor: '#1f2937',
                         color: 'white',
                         border: '2px solid #ca8a04',
-                        padding: '10px 20px',
+                        padding: isPhone ? '8px 14px' : '10px 20px',
                         borderRadius: '8px',
-                        fontSize: '1.2rem',
+                        fontSize: isPhone ? '1rem' : '1.2rem',
+                        maxWidth: '100%',
                         cursor: 'pointer',
                         outline: 'none'
                     }}
@@ -124,8 +134,9 @@ export default function RollingMachine({ characters, players, gameId }) {
             {/* MASZYNA LOSUJĄCA */}
             <div style={{
                 position: 'relative',
-                width: '85vw',
-                height: '450px',
+                width: '100%',
+                height: `${CARD_HEIGHT + 70}px`,
+                flex: 'none',
                 backgroundColor: 'rgba(31, 41, 55, 0.1)',
                 borderTop: '3px solid #1f2937',
                 borderBottom: '3px solid #1f2937',
@@ -152,9 +163,9 @@ export default function RollingMachine({ characters, players, gameId }) {
                         transform: 'translateX(-50%)',
                         width: 0,
                         height: 0,
-                        borderLeft: '20px solid transparent',
-                        borderRight: '20px solid transparent',
-                        borderTop: '30px solid #facc15'
+                        borderLeft: `${isPhone ? 14 : 20}px solid transparent`,
+                        borderRight: `${isPhone ? 14 : 20}px solid transparent`,
+                        borderTop: `${isPhone ? 20 : 30}px solid #facc15`
                     }} />
                     <div style={{
                         position: 'absolute',
@@ -163,9 +174,9 @@ export default function RollingMachine({ characters, players, gameId }) {
                         transform: 'translateX(-50%)',
                         width: 0,
                         height: 0,
-                        borderLeft: '20px solid transparent',
-                        borderRight: '20px solid transparent',
-                        borderBottom: '30px solid #facc15'
+                        borderLeft: `${isPhone ? 14 : 20}px solid transparent`,
+                        borderRight: `${isPhone ? 14 : 20}px solid transparent`,
+                        borderBottom: `${isPhone ? 20 : 30}px solid #facc15`
                     }} />
                 </div>
 
@@ -180,11 +191,12 @@ export default function RollingMachine({ characters, players, gameId }) {
 
                 {/* TAŚMA */}
                 <div
+                    data-strip
                     style={{
                         whiteSpace: 'nowrap',
                         position: 'absolute',
                         left: '50%',
-                        transform: `translateX(-${translateX}px)`,
+                        transform: `translateX(-${stripOffset}px)`,
                         transition: isRolling ? 'transform 5s cubic-bezier(0.1, 0, 0.1, 1)' : 'none',
                         willChange: 'transform'
                     }}
@@ -195,23 +207,31 @@ export default function RollingMachine({ characters, players, gameId }) {
                             width: `${CARD_WIDTH}px`,
                             textAlign: 'center'
                         }}>
-                            <CharacterCard character={char} />
+                            <CharacterCard character={char} width={CARD_WIDTH - 10} />
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* PRZYCISKI */}
-            <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
+            <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: isPhone ? '12px' : '20px',
+                marginTop: isPhone ? '20px' : '40px',
+                marginBottom: 'auto',
+                padding: '0 12px'
+            }}>
                 <button
                     onClick={startDraw}
                     disabled={isRolling}
                     style={{
-                        padding: '20px 60px',
+                        padding: isPhone ? '14px 28px' : screen.isCompact ? '16px 40px' : '20px 60px',
                         backgroundColor: isRolling ? '#4b5563' : '#ca8a04',
                         color: 'black',
                         fontWeight: '900',
-                        fontSize: '1.4rem',
+                        fontSize: isPhone ? '1.05rem' : '1.4rem',
                         border: 'none',
                         cursor: isRolling ? 'not-allowed' : 'pointer',
                         borderRadius: '12px',
@@ -226,11 +246,11 @@ export default function RollingMachine({ characters, players, gameId }) {
                     <button
                         onClick={saveDraw}
                         style={{
-                            padding: '20px 60px',
+                            padding: isPhone ? '14px 28px' : screen.isCompact ? '16px 40px' : '20px 60px',
                             backgroundColor: '#16a34a',
                             color: 'white',
                             fontWeight: '900',
-                            fontSize: '1.4rem',
+                            fontSize: isPhone ? '1.05rem' : '1.4rem',
                             border: 'none',
                             cursor: 'pointer',
                             borderRadius: '12px',

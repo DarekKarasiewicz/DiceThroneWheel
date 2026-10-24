@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import TopBar, { topBarButtonStyle } from './TopBar';
+import useScreen from '../hooks/useScreen';
 
 function StatValue({ label, value, unit = '', highlight = false }) {
     return (
@@ -7,18 +9,20 @@ function StatValue({ label, value, unit = '', highlight = false }) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: '12px 16px',
+            padding: '12px 10px',
             backgroundColor: '#1f2937',
             borderRadius: '8px',
-            minWidth: '100px',
+            flex: '1 1 90px',
+            minWidth: '80px',
             border: highlight ? '1px solid #ca8a04' : '1px solid #374151'
         }}>
             <span style={{
                 color: highlight ? '#facc15' : '#e5e7eb',
-                fontSize: '1.6rem',
-                fontWeight: '900'
+                fontSize: 'clamp(1.2rem, 4vw, 1.6rem)',
+                fontWeight: '900',
+                textAlign: 'center'
             }}>
-                {value}{unit}
+                {value}{unit && <span style={{ fontSize: '0.6em', whiteSpace: 'nowrap' }}>{unit}</span>}
             </span>
             <span style={{
                 color: '#9ca3af',
@@ -111,7 +115,7 @@ function PlayerCard({ stats, rank }) {
         <div style={{
             backgroundColor: '#111827',
             borderRadius: '12px',
-            padding: '24px',
+            padding: 'clamp(14px, 3vw, 24px)',
             border: rank === 1 ? '2px solid #ca8a04' : '1px solid #374151',
             boxShadow: rank === 1 ? '0 0 20px rgba(202, 138, 4, 0.2)' : 'none'
         }}>
@@ -119,7 +123,8 @@ function PlayerCard({ stats, rank }) {
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '16px',
+                flexWrap: 'wrap',
+                gap: 'clamp(10px, 2vw, 16px)',
                 marginBottom: '20px'
             }}>
                 <span style={{ fontSize: '2rem' }}>{medal}</span>
@@ -139,10 +144,10 @@ function PlayerCard({ stats, rank }) {
                     />
                 )}
 
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: '120px' }}>
                     <h2 style={{
                         color: '#facc15',
-                        fontSize: '1.5rem',
+                        fontSize: 'clamp(1.15rem, 4vw, 1.5rem)',
                         fontWeight: '900',
                         textTransform: 'uppercase',
                         letterSpacing: '2px',
@@ -166,7 +171,7 @@ function PlayerCard({ stats, rank }) {
                 <div style={{ textAlign: 'right' }}>
                     <span style={{
                         color: '#facc15',
-                        fontSize: '2.2rem',
+                        fontSize: 'clamp(1.6rem, 6vw, 2.2rem)',
                         fontWeight: '900'
                     }}>
                         {stats.winRate}%
@@ -248,7 +253,8 @@ function PlayerCard({ stats, rank }) {
     );
 }
 
-export default function StatsPage({ onBack }) {
+export default function StatsPage({ onBack, onHome }) {
+    const { isPhone } = useScreen();
     const [playerStats, setPlayerStats] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -265,65 +271,29 @@ export default function StatsPage({ onBack }) {
     }, []);
 
     return (
-        <div style={{
-            minHeight: '100vh',
+        <div className="scroll-y" style={{
+            height: '100%',
             backgroundColor: '#0b0e14',
             color: 'white',
             fontFamily: 'sans-serif'
         }}>
-            {/* Top bar */}
-            <div style={{
-                height: '6vh',
-                backgroundColor: '#1f2937',
-                borderBottom: '2px solid #ca8a04',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 40px',
-                position: 'sticky',
-                top: 0,
-                zIndex: 50
-            }}>
-                <h2 style={{
-                    color: '#facc15',
-                    fontSize: '1.5rem',
-                    fontWeight: '900',
-                    letterSpacing: '2px',
-                    textTransform: 'uppercase'
-                }}>
-                    Dice Throne
-                </h2>
-
-                <button
-                    onClick={onBack}
-                    style={{
-                        padding: '8px 20px',
-                        backgroundColor: '#ca8a04',
-                        color: '#111827',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '0.9rem',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                    }}
-                >
+            <TopBar onHome={onHome}>
+                <button onClick={onBack} style={topBarButtonStyle(isPhone, 'primary')}>
                     ← Back
                 </button>
-            </div>
+            </TopBar>
 
             {/* Tytuł */}
             <div style={{
                 textAlign: 'center',
-                padding: '40px 20px 20px'
+                padding: isPhone ? '24px 16px 8px' : '40px 20px 20px'
             }}>
                 <h1 style={{
                     color: '#facc15',
-                    fontSize: '2.5rem',
+                    fontSize: 'clamp(1.6rem, 6vw, 2.5rem)',
                     fontWeight: '900',
                     textTransform: 'uppercase',
-                    letterSpacing: '4px',
+                    letterSpacing: 'clamp(1px, 0.8vw, 4px)',
                     margin: 0
                 }}>
                     Player Statistics
@@ -343,7 +313,7 @@ export default function StatsPage({ onBack }) {
             <div style={{
                 maxWidth: '900px',
                 margin: '0 auto',
-                padding: '20px',
+                padding: isPhone ? '12px' : '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '20px'

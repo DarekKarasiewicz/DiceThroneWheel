@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import api from './services/api';
-import TopBar from './components/TopBar';
+import { GameTopBar } from './components/TopBar';
 import RollingMachine from './components/RollingMachine';
 import RightPanel from './components/RightPanel';
 import StartScreen from './components/StartScreen';
 import StatsPage from './components/StatsPage';
+import useScreen from './hooks/useScreen';
 
 
 function App() {
@@ -13,6 +14,8 @@ function App() {
     const [gameId, setGameId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState('home');
+    const [statsReturnPage, setStatsReturnPage] = useState('home');
+    const screen = useScreen();
 
     useEffect(() => {
         api.get('/characters').then(res => setCharacters(res.data));
@@ -25,7 +28,6 @@ function App() {
             const res = await api.post('/game/create');
             setGameId(res.data.id);
             setCurrentPage('game');
-            console.log(gameId);
         } catch (err) {
             console.error('Failed to create game:', err);
         } finally {
@@ -33,20 +35,36 @@ function App() {
         }
     };
 
+    const goHome = () => setCurrentPage('home');
+    const openStats = (from) => () => {
+        setStatsReturnPage(from);
+        setCurrentPage('stats');
+    };
+
     if (currentPage === 'stats') {
-        return <StatsPage onBack={() => setCurrentPage(gameId ? 'game' : 'home')} />;
+        return <StatsPage onBack={() => setCurrentPage(statsReturnPage)} onHome={goHome} />;
     }
 
     if (!gameId || currentPage === 'home') {
-        return <StartScreen onNewGame={handleNewGame} loading={loading} onStats={() => setCurrentPage('stats')} />;
+        return <StartScreen onNewGame={handleNewGame} loading={loading} onStats={openStats('home')} />;
     }
 
     return (
-        <div>
-            <TopBar onStats={() => setCurrentPage('stats')} />
-            <div style={{ display: 'flex' }}>
-                <RollingMachine characters={characters} players={players} gameId={gameId} />
-                <RightPanel gameId={gameId} />
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <GameTopBar onStats={openStats('game')} onHome={goHome} />
+            {/* Szeroki ekran: maszyna + panel obok siebie; wąski: panel pod maszyną, całość się przewija */}
+            <div
+                className={screen.isStacked ? 'scroll-y' : undefined}
+                style={{
+                    flex: 1,
+                    minHeight: 0,
+                    display: 'flex',
+                    flexDirection: screen.isStacked ? 'column' : 'row',
+                    overflow: screen.isStacked ? undefined : 'hidden'
+                }}
+            >
+                <RollingMachine characters={characters} players={players} gameId={gameId} screen={screen} />
+                <RightPanel gameId={gameId} stacked={screen.isStacked} />
             </div>
         </div>
     );

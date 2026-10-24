@@ -16,7 +16,7 @@ const defaultButtonStyle = {
     letterSpacing: '2px'
 };
 
-export default function DataBackup({ buttonStyle = defaultButtonStyle, gap = '12px' }) {
+export default function DataBackup({ buttonStyle = defaultButtonStyle, gap = '12px', short = false }) {
     const fileInput = useRef(null);
 
     const handleExport = async () => {
@@ -62,8 +62,8 @@ export default function DataBackup({ buttonStyle = defaultButtonStyle, gap = '12
 
     return (
         <div style={{ display: 'flex', gap }}>
-            <button style={buttonStyle} onClick={handleExport}>⬇ Export data</button>
-            <button style={buttonStyle} onClick={() => fileInput.current.click()}>⬆ Import data</button>
+            <button style={buttonStyle} onClick={handleExport}>{short ? 'Export' : '⬇ Export data'}</button>
+            <button style={buttonStyle} onClick={() => fileInput.current.click()}>{short ? 'Import' : '⬆ Import data'}</button>
             <input
                 ref={fileInput}
                 type="file"
