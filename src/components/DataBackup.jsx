@@ -56,7 +56,7 @@ export default function DataBackup() {
             window.location.reload();
         } catch (err) {
             console.error(err);
-            alert('Invalid data file.');
+            alert(err instanceof SyntaxError ? 'Invalid data file: not a JSON file' : err.message);
         }
     };
 

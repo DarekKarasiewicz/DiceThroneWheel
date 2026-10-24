@@ -70,28 +70,28 @@
     "description": "The Treant is the most elder of contenders. He decided he could no longer be a stick in the mud weeping over willows. He chose to branch out, leafing his thicket behind with a sappy goodbye. He dug deep, packed his trunk, spruced himself up, and began lumbering ever closer to the true root of the problem--the Mad King."
   },
   {
-    "id": 11,
+    "id": 12,
     "name": "Cursed Pirate",
     "heroImage": "images/HeroImage/CursedPirate.png",
     "backgroundImage": "images/HeroBackGround/CursedPirate.jpg",
     "description": "Her passion for adventure & the Seven Seas has won her riches untold. Unfortunately, her exploits have also won her a curse so dire that her life hangs in the balance. To confront the soul splitting fury of the Cursed Pirate will likely result in a one-way trip to Davey Jones’ locker."
   },
   {
-    "id": 12,
+    "id": 13,
     "name": "Artificer",
     "heroImage": "images/HeroImage/Artificer.png",
     "backgroundImage": "images/HeroBackGround/Artificer.jpg",
     "description": "To underestimate the Artificer is to invite destruction by a cold & calculated robotic assault. His deranged love for metallic tools-of-destruction is second only to his desire to see all combatants reduced to nothing."
   },
   {
-    "id": 13,
+    "id": 14,
     "name": "Moon Elf",
     "heroImage": "images/HeroImage/MoonElf.png",
     "backgroundImage": "images/HeroBackGround/MoonElf.jpg",
     "description": "The Moon Elf’s damage may not match hit for hit with her opponents. However, her ability to repeatedly dodge attacks while simultaneously using the power of the moon to blind and entangle her foes, makes her a frustratingly dangerous opponent to face."
   },
   {
-    "id": 14,
+    "id": 15,
     "name": "Barbarian",
     "heroImage": "images/HeroImage/Barbarian.png",
     "backgroundImage": "images/HeroBackGround/Barbarian.jpg",

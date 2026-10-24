@@ -6,17 +6,30 @@ Można ją zainstalować na tablecie lub telefonie jako aplikację (PWA).
 
 ## Dane
 
-- `public/data/characters.json` – bohaterowie (nazwa, obrazki, opis),
-- `public/data/players.json` – gracze,
-- wyniki (gry i losowania) – dokument JSON zapisywany na urządzeniu (`localStorage`, klucz `dicethrone-data`).
+- `public/data/characters.json` – bohaterowie (nazwa, obrazki, opis). Żeby dodać bohatera, dopisz go tu
+  (plus obrazki w `public/images/`) i wypchnij zmiany na `main`.
+- **gracze, gry i losowania** – jeden dokument JSON zapisywany na urządzeniu (`localStorage`, klucz `dicethrone-data`).
   Nic nie jest wysyłane na serwer.
+- `public/data/players.json` – tylko domyślni gracze na start, gdy urządzenie nie ma jeszcze żadnych danych.
 
-Żeby dodać gracza lub bohatera, edytujesz plik JSON (bohater: dodatkowo obrazki w `public/images/`)
-i wypychasz zmiany na `main`. Urządzenie pobierze nową wersję przy następnym otwarciu z internetem.
-**Nie zmieniaj `id` istniejących wpisów** – wyniki odwołują się do nich.
+Na ekranie startowym są przyciski **Export data / Import data** – zapis i odczyt pliku `.json` z graczami,
+grami i losowaniami (na tablecie przez arkusz udostępniania → „Zachowaj w Plikach”).
+Import zastępuje wszystkie obecne dane. Plik bez listy `players` (starszy format) zostawia obecnych graczy.
 
-Na ekranie startowym są przyciski **Export data / Import data** – zapis i odczyt kopii wyników jako plik `.json`
-(na tablecie przez arkusz udostępniania → „Zachowaj w Plikach”). Import zastępuje wszystkie obecne wyniki.
+Format pliku:
+
+```json
+{
+  "version": 3,
+  "players": [{ "id": 1, "name": "Darek" }],
+  "games":   [{ "id": 1, "status": "FINISHED", "winner_id": 9, "timestamp": "2026-03-09T18:55:34.348Z" }],
+  "draws":   [{ "id": 1, "characterId": 9, "playerId": 1, "gameId": 1, "timestamp": "2026-03-09T18:57:49.868Z" }]
+}
+```
+
+- `status`: `FINISHED`, `IN_PROGRESS`, `CANCELLED` albo `null`; `winner_id` to id bohatera (0 = brak zwycięzcy).
+- `characterId` odpowiada `id` w `characters.json` (te same id co w tabeli `characters` w starej bazie PostgreSQL).
+- Każde losowanie musi wskazywać gracza z listy `players`. **Nie zmieniaj `id` istniejących wpisów.**
 
 ## Struktura
 

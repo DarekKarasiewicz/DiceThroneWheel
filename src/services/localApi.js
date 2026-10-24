@@ -1,22 +1,23 @@
 // Lokalny zamiennik backendu (Spring + PostgreSQL) dla wersji offline / GitHub Pages.
 //
-// Dane pochodzą z plików JSON:
+// Dane:
 //  - public/data/characters.json  – bohaterowie (edytowalne w repozytorium)
-//  - public/data/players.json     – gracze (edytowalne w repozytorium)
-//  - wyniki (gry + losowania)     – dokument JSON zapisywany na urządzeniu,
+//  - gracze + gry + losowania     – dokument JSON zapisywany na urządzeniu,
 //                                   eksportowany / importowany jako plik .json
+//  - public/data/players.json     – domyślni gracze, użyci tylko gdy na urządzeniu
+//                                   nie ma jeszcze żadnych danych
 //
 // Udostępnia ten sam interfejs co instancja axios (get/post/put -> { data }),
 // więc komponenty nie muszą wiedzieć, skąd pochodzą dane.
 
 const RESULTS_KEY = 'dicethrone-data';
-const RESULTS_VERSION = 2;
+const RESULTS_VERSION = 3;
 
 const asset = (path) => `${process.env.PUBLIC_URL}/${path}`;
 
-// --- Pliki JSON z bohaterami i graczami ---
+// --- Pliki JSON z repozytorium ---
 
-let catalogPromise = null;
+let charactersPromise = null;
 
 async function fetchJson(path) {
     const response = await fetch(asset(path), { cache: 'no-cache' });
@@ -24,39 +25,37 @@ async function fetchJson(path) {
     return response.json();
 }
 
-function loadCatalog() {
-    if (!catalogPromise) {
-        catalogPromise = Promise.all([fetchJson('data/characters.json'), fetchJson('data/players.json')])
-            .then(([characters, players]) => ({ characters, players }))
-            .catch((err) => {
-                catalogPromise = null;
-                throw err;
-            });
+function loadCharacters() {
+    if (!charactersPromise) {
+        charactersPromise = fetchJson('data/characters.json').catch((err) => {
+            charactersPromise = null;
+            throw err;
+        });
     }
-    return catalogPromise;
+    return charactersPromise;
 }
 
-// --- Wyniki zapisywane na urządzeniu ---
-
-const emptyResults = () => ({ version: RESULTS_VERSION, games: [], draws: [] });
+// --- Dane zapisywane na urządzeniu ---
 
 function isValidResults(data) {
     return data && Array.isArray(data.games) && Array.isArray(data.draws);
 }
 
+// players === null oznacza: jeszcze nie ustawieni (pierwsze uruchomienie lub plik w starym formacie)
 function loadResults() {
     try {
         const raw = localStorage.getItem(RESULTS_KEY);
         if (raw) {
             const data = JSON.parse(raw);
             if (isValidResults(data)) {
-                return { version: RESULTS_VERSION, games: data.games, draws: data.draws };
+                const players = Array.isArray(data.players) ? data.players : null;
+                return { version: RESULTS_VERSION, players, games: data.games, draws: data.draws };
             }
         }
     } catch (e) {
-        console.error('Failed to read local results, starting fresh:', e);
+        console.error('Failed to read local data, starting fresh:', e);
     }
-    return emptyResults();
+    return { version: RESULTS_VERSION, players: null, games: [], draws: [] };
 }
 
 function saveResults(results) {
@@ -152,7 +151,7 @@ function notFound(what, id) {
     throw new Error(`${what} not found: ${id}`);
 }
 
-// --- "Endpointy" (db = bohaterowie + gracze z plików JSON + wyniki z urządzenia) ---
+// --- "Endpointy" (db = bohaterowie z characters.json + gracze i wyniki z urządzenia) ---
 
 const routes = {
     'GET /characters': (db) => db.characters.map(toCharacterDTO),
@@ -210,11 +209,15 @@ async function request(method, url, config = {}) {
     const handler = routes[`${method} ${url}`];
     if (!handler) throw new Error(`Unknown local endpoint: ${method} ${url}`);
 
-    const { characters, players } = await loadCatalog();
+    const characters = await loadCharacters();
     const results = loadResults();
+    if (!results.players) {
+        results.players = sanitizePlayers(await fetchJson('data/players.json'));
+        saveResults(results);
+    }
     const db = {
         characters,
-        players,
+        players: results.players,
         games: results.games,
         draws: results.draws,
         save: () => saveResults(results),
@@ -228,17 +231,34 @@ const localApi = {
     put: (url, body, config) => request('PUT', url, config),
 };
 
-// --- Eksport / import pliku z wynikami ---
+// --- Eksport / import pliku z danymi (gracze + gry + losowania) ---
 
 export function exportData() {
-    return JSON.stringify(loadResults(), null, 2);
+    const results = loadResults();
+    return JSON.stringify({ ...results, players: results.players ?? [] }, null, 2);
 }
 
 const GAME_STATUSES = ['FINISHED', 'IN_PROGRESS', 'CANCELLED'];
+const MAX_NAME_LENGTH = 40;
 const isId = (v) => Number.isInteger(v) && v >= 0;
 const isTimestamp = (v) => typeof v === 'string' && v.length <= 40 && !Number.isNaN(Date.parse(v));
 
+function invalid(reason) {
+    throw new Error(`Invalid DiceThrone data file: ${reason}`);
+}
+
 // Z importowanego pliku bierzemy tylko znane pola o poprawnych typach
+function sanitizePlayers(players) {
+    if (!Array.isArray(players) || players.length === 0) invalid('no players');
+    const result = players.map((p) => {
+        const name = typeof p?.name === 'string' ? p.name.trim() : '';
+        if (!isId(p?.id) || p.id === 0 || !name || name.length > MAX_NAME_LENGTH) invalid('bad player entry');
+        return { id: p.id, name };
+    });
+    if (new Set(result.map(p => p.id)).size !== result.length) invalid('duplicate player id');
+    return result;
+}
+
 function sanitizeGame(g) {
     if (!g || !isId(g.id) || g.id === 0 || !isId(g.winner_id) || !isTimestamp(g.timestamp)) return null;
     if (g.status !== null && g.status !== undefined && !GAME_STATUSES.includes(g.status)) return null;
@@ -250,13 +270,19 @@ function sanitizeDraw(d) {
     return { id: d.id, characterId: d.characterId, playerId: d.playerId, gameId: d.gameId, timestamp: d.timestamp };
 }
 
+// Plik bez listy graczy (starszy format) zostawia obecnych graczy z urządzenia
 export function importData(json) {
     const data = JSON.parse(json);
-    if (!isValidResults(data)) throw new Error('Invalid DiceThrone data file');
+    if (!isValidResults(data)) invalid('missing games or draws');
+    const players = data.players !== undefined ? sanitizePlayers(data.players) : loadResults().players;
     const games = data.games.map(sanitizeGame);
     const draws = data.draws.map(sanitizeDraw);
-    if (games.includes(null) || draws.includes(null)) throw new Error('Invalid DiceThrone data file');
-    saveResults({ version: RESULTS_VERSION, games, draws });
+    if (games.includes(null) || draws.includes(null)) invalid('bad game or draw entry');
+    if (players) {
+        const playerIds = new Set(players.map(p => p.id));
+        if (draws.some(d => !playerIds.has(d.playerId))) invalid('draw references unknown player');
+    }
+    saveResults({ version: RESULTS_VERSION, players, games, draws });
 }
 
 export default localApi;
