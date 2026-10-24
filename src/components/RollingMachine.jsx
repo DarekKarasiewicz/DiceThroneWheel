@@ -112,7 +112,9 @@ export default function RollingMachine({ characters, players, gameId }) {
                         outline: 'none'
                     }}
                 >
-                    <option value="">-- Select Player --</option>
+                    <option value="">
+                        {players.length > 0 ? '-- Select Player --' : '-- No players: use Import data --'}
+                    </option>
                     {players.map(p => (
                         <option key={p.id} value={p.id}>{p.name}</option>
                     ))}

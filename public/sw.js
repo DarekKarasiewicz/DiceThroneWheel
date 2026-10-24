@@ -1,5 +1,5 @@
 // Service worker: po pierwszym otwarciu cała aplikacja (kod + dane JSON + obrazki) działa offline.
-const CACHE = 'dicethrone-v2';
+const CACHE = 'dicethrone-v3';
 
 const STATIC_FILES = [
     './',
@@ -9,7 +9,6 @@ const STATIC_FILES = [
     'logo192.png',
     'logo512.png',
     'data/characters.json',
-    'data/players.json',
 ];
 
 self.addEventListener('install', (event) => {

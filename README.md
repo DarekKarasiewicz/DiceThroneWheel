@@ -10,7 +10,7 @@ Można ją zainstalować na tablecie lub telefonie jako aplikację (PWA).
   (plus obrazki w `public/images/`) i wypchnij zmiany na `main`.
 - **gracze, gry i losowania** – jeden dokument JSON zapisywany na urządzeniu (`localStorage`, klucz `dicethrone-data`).
   Nic nie jest wysyłane na serwer.
-- `public/data/players.json` – tylko domyślni gracze na start, gdy urządzenie nie ma jeszcze żadnych danych.
+- Na nowym urządzeniu lista graczy jest pusta – gracze pojawiają się dopiero po **Import data**.
 
 Na ekranie startowym są przyciski **Export data / Import data** – zapis i odczyt pliku `.json` z graczami,
 grami i losowaniami (na tablecie przez arkusz udostępniania → „Zachowaj w Plikach”).
@@ -20,7 +20,7 @@ Format pliku:
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "players": [{ "id": 1, "name": "Darek" }],
   "games":   [{ "id": 1, "status": "FINISHED", "winner_id": 9, "timestamp": "2026-03-09T18:55:34.348Z" }],
   "draws":   [{ "id": 1, "characterId": 9, "playerId": 1, "gameId": 1, "timestamp": "2026-03-09T18:57:49.868Z" }]
