@@ -1,3 +1,18 @@
+import DataBackup from './DataBackup';
+
+const dataButtonStyle = {
+    padding: '8px 20px',
+    backgroundColor: 'transparent',
+    color: '#ca8a04',
+    border: '1px solid #ca8a04',
+    borderRadius: '6px',
+    fontSize: '0.9rem',
+    fontWeight: '700',
+    cursor: 'pointer',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+};
+
 export default function TopBar({ onStats }) {
     return (
         <div style={{
@@ -62,23 +77,7 @@ export default function TopBar({ onStats }) {
                     Statistics
                 </button>
 
-                <button
-                    disabled
-                    style={{
-                        padding: '8px 20px',
-                        backgroundColor: '#374151',
-                        color: '#9ca3af',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        cursor: 'not-allowed',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                    }}
-                >
-                    Login
-                </button>
+                <DataBackup buttonStyle={dataButtonStyle} gap="20px" />
             </div>
         </div>
     );

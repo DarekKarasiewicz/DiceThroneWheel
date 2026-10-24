@@ -3,7 +3,7 @@ import { exportData, importData } from '../services/localApi';
 
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
-const buttonStyle = {
+const defaultButtonStyle = {
     padding: '8px 20px',
     backgroundColor: 'transparent',
     color: '#9ca3af',
@@ -16,7 +16,7 @@ const buttonStyle = {
     letterSpacing: '2px'
 };
 
-export default function DataBackup() {
+export default function DataBackup({ buttonStyle = defaultButtonStyle, gap = '12px' }) {
     const fileInput = useRef(null);
 
     const handleExport = async () => {
@@ -61,7 +61,7 @@ export default function DataBackup() {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap }}>
             <button style={buttonStyle} onClick={handleExport}>⬇ Export data</button>
             <button style={buttonStyle} onClick={() => fileInput.current.click()}>⬆ Import data</button>
             <input
